@@ -2,4 +2,6 @@
 *~
 bin/
 gen/
+.idea/workspace.xml
+.DS_Store
 
