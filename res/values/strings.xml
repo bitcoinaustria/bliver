@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">bliver</string>
+    <string name="title_package_detail">Package Detail</string>
+    <string name="title_package_list">Packages</string>
+
+</resources>
