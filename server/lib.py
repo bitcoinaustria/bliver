@@ -49,14 +49,14 @@ def sign_rawtx(conn, partial_tx):
   return signed['hex']
 
 
-def gen_uri(server_url, order_id, order_descr):
+def gen_uri(order_id, order_descr):
   import urllib
   payload = urllib.urlencode([
-    ("server-url", server_url),
+    #("server-url", server_url),
     ("order-id", order_id),
     ("order-description", order_descr)
   ])
-  return "multisig:%s" % payload
+  return payload
 
 def run():
   conn = bitcoinrpc.connect_to_local()
@@ -78,7 +78,7 @@ def run():
   print "Multisig 2 of 3:",
   #t = conn.proxy.listunspent()
   #print t
-  multisig = gen_2of3(conn, "mrvQxKbe321W58xaTs65YS6mvUVGQyP52B",
+  multisig = gen_2of3(conn, "mrvQxKbe321W58xaTs65YS6mvUVGQyP52B", \
     "03b08df6e673619b93fc0dd39be70d7bf56873241fcfde9e87332d79b87de80fcd", "023d7a2768855435b221003cb23f26d950a4ee22f3d47c9833778326d221253afc")
   print multisig
 

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block body %}
+
+<h1>Hello World!</h1>
+<h2>Multisig Test</h2>
+<a href="{{ms_url}}?{{ ms_data }}">multisig url</a>
+
+<h2>Submit Pubkey</h2>
+<form action="{{ms_url}}" method="post">
+<textarea name="pubkey">mrvQxKbe321W58xaTs65YS6mvUVGQyP52B</textarea>
+<br/>
+<input type="submit" value="send" />
+</form>
+
+<h2>Check</h2>
+<a href="{{ check_url }}">check addr</a>
+
+</html>
+
+{% endblock %}
