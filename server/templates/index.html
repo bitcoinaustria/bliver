@@ -2,8 +2,8 @@
 {% block body %}
 
 <h1>Hello World!</h1>
-<h2>Multisig Test</h2>
-<a href="{{ms_url}}?{{ ms_data }}">multisig url</a>
+<h2>Multisig URI</h2>
+<a href="{{ms_uri}}">multisig uri</a>
 
 <h2>Submit Pubkey</h2>
 <form action="{{ms_url}}" method="post">
@@ -15,6 +15,11 @@
 <h2>Check</h2>
 <a href="{{ check_url }}">check addr</a>
 
-</html>
+<h2>Package QR Code</h2>
+<div>
+This is the partial transaction QR code:
+<br>
+<img src='{{qr_url}}' height="256" width="256">
+</div>
 
 {% endblock %}

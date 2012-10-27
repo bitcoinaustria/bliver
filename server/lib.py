@@ -27,7 +27,7 @@ def check_rcv_2of3(conn, adr_2of3, value, searchdepth = 100):
   cur_block = conn.getblockcount()
   limit_blocknr = cur_block - searchdepth
   while cur_block > limit_blocknr:
-    print cur_block
+    #print cur_block
     blkhash = conn.proxy.getblockhash(cur_block)
     blk = conn.proxy.getblock(blkhash)
     c = check(blk["tx"])
@@ -49,12 +49,13 @@ def sign_rawtx(conn, partial_tx):
   return signed['hex']
 
 
-def gen_uri(order_id, order_descr):
+def gen_uri(order_id, order_descr, amount):
   import urllib
   payload = urllib.urlencode([
     #("server-url", server_url),
     ("order-id", order_id),
-    ("order-description", order_descr)
+    ("order-description", order_descr),
+    ("amount", amount)
   ])
   return payload
 

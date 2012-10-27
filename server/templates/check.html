@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block body %}
+
+<h1>Check {{ addr }}</h1>
+
+{% if c[0] %}
+
+  <strong>OK</strong>
+  <br>
+  TX: {{ c[1] }}
+  <br>
+  n: {{ c[2] }}
+
+{% else %}
+
+  <strong>NOT OK</strong>
+
+{% endif %}
+
+
+{% endblock %}
