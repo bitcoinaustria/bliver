@@ -22,10 +22,10 @@ def robots_txt():
   response.headers["Content-type"] = "text/plain"
   return response
 
-@app.route('/logo.jpeg', methods=['GET'])
+@app.route('/logo.png', methods=['GET'])
 def logo_jpeg():
-  response = make_response(open('static/robots.txt').read())
-  response.headers["Content-type"] = "image/jpeg"
+  response = make_response(open('static/logo.png').read())
+  response.headers["Content-type"] = "image/png"
   return response
 
 @app.route('/qr')
