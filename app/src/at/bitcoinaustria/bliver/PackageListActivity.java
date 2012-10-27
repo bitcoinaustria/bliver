@@ -12,8 +12,11 @@ import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.uri.BitcoinURI;
+import com.google.common.base.Splitter;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.util.Map;
 
 public class PackageListActivity extends FragmentActivity implements PackageListFragment.Callbacks {
 
@@ -102,7 +105,6 @@ public class PackageListActivity extends FragmentActivity implements PackageList
             final IntentIntegrator integrator = new IntentIntegrator(this);
             integrator.initiateScan();
         }
-
         return true;
     }
 
@@ -110,8 +112,17 @@ public class PackageListActivity extends FragmentActivity implements PackageList
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (scanResult != null) {
-            //scanResult.getContents()
-            // TODO
+            new BasicTask(){
+                @Override
+                void run() {
+                    String contents = scanResult.getContents();
+                    Map<String,String> barcodeData = Splitter.on("&").withKeyValueSeparator("=").split(contents);
+                    String orderId = barcodeData.get("order-id");
+                    Delivery delivery = deliveryDao.getByOrderId(orderId);
+                    MultisigUri multisigUri = new MultisigUri(delivery);
+                    new MultisigUriHandler(Signer.DEMO_SIGNER).broadcastTransaction(multisigUri);
+                }
+            }.start();
         }
     }
 
