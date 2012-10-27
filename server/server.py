@@ -2,6 +2,11 @@
 
 PUBKEY = "mrvQxKbe321W58xaTs65YS6mvUVGQyP52B"
 TARGET_ADDR = "myKPhLdmfk6Ss8j6ugqCVwsC3bcUHpZCg5"
+AMOUNT = 1231234
+
+# additional 2 for the 2 of 3 (additionally to the PUBKEY)
+ESCROW = "03b08df6e673619b93fc0dd39be70d7bf56873241fcfde9e87332d79b87de80fcd"
+SENDER = "023d7a2768855435b221003cb23f26d950a4ee22f3d47c9833778326d221253afc"
 
 from flask import Flask, Response, render_template, request, url_for, send_file
 app = Flask(__name__)
@@ -35,9 +40,7 @@ def multisig():
 
 def gen_multisig(pubkey):
   from lib import gen_2of3
-  return gen_2of3(conn, pubkey,
-      "03b08df6e673619b93fc0dd39be70d7bf56873241fcfde9e87332d79b87de80fcd",
-      "023d7a2768855435b221003cb23f26d950a4ee22f3d47c9833778326d221253afc")
+  return gen_2of3(conn, pubkey, ESCROW, SENDER)
 
 def gen_qr(pubkey, target_addr = TARGET_ADDR, amount = 0.1):
   from lib import gen_partial_tx, check_rcv_2of3, sign_rawtx
@@ -60,15 +63,34 @@ def check(addr):
   c = check_rcv_2of3(conn, addr, value)
   return render_template('check.html', c = c, addr = addr)
 
+@app.route('/submit', methods=["POST"])
+def privkey_import():
+  from lib import import_privkey, gen_partial_tx, check_rcv_2of3, sign_rawtx, send_raw_tx
+  privkey = request.form.get("privkey")
+  try:
+    output = import_privkey(conn, privkey)
+  except Exception as e:
+    output = 'ERROR: %s' % e.error
+  check = check_rcv_2of3(conn, multisig, AMOUNT)
+  if check and check[0]:
+    _, txid, voutid = check
+    partial_tx = gen_partial_tx(conn, TARGET_ADDR, txid, voutid, AMOUNT)
+    signed_tx = sign_rawtx(conn, partial_tx)
+    output += '<br>SIGNED AND SENT!<br>%s' % send_raw_tx(signed_tx)
+  else:
+    output += '<br>check = FALSE :('
+  return render_template('privkey.html', output = output)
+
 @app.route('/')
 def hello_world():
   from lib import gen_uri
   data = gen_uri(123, "des cription of ...", 12341234)
   return render_template('index.html',
-    check_url=url_for('check', addr = '2NCK67mvVJSG1v2wj2NfnEsCCQBXpRqpgC7'),
+    check_url=url_for('check', addr = gen_multisig(PUBKEY)),
     ms_uri = 'multisig:%s?%s' % (url_for('multisig'), data),
     ms_url = url_for("multisig"),
-    qr_url = gen_qr(PUBKEY))
+    qr_url = gen_qr(PUBKEY),
+    privkey_import = url_for("privkey_import"))
 
 if __name__ == '__main__':
   app.run(port=14992, debug=True)
