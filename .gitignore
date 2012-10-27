@@ -2,6 +2,6 @@
 *~
 bin/
 gen/
-.idea/workspace.xml
+app/.idea/workspace.xml
 .DS_Store
 pynode
