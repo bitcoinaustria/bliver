@@ -2,6 +2,7 @@ package at.bitcoinaustria.bliver;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -30,8 +31,21 @@ public class PackageListActivity extends FragmentActivity implements PackageList
         final Intent intent = getIntent();
         final Uri data = intent.getData();
         if (data != null) {
-            final MultisigUri multisigUri = MultisigUri.from(data.toString());
-            // TODO
+            new AsyncTask<Void,Void,String>(){
+                @Override
+                protected String doInBackground(Void... params) {
+                    final MultisigUri multisigUri = MultisigUri.from(data.toString());
+                    return new MultisigUriHandler(Signer.DEMO_SIGNER).fromMultisigUri(multisigUri);
+                }
+
+                @Override
+                protected void onPostExecute(String bitcoinURI) {
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(bitcoinURI));
+                    startActivity(i);
+                }
+            }.execute();
+
+            int debug = 0;
         }
     }
 

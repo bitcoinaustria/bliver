@@ -27,7 +27,7 @@ def check_rcv_2of3(conn, adr_2of3, value, searchdepth = 100):
   cur_block = conn.getblockcount()
   limit_blocknr = cur_block - searchdepth
   while cur_block > limit_blocknr:
-    print cur_block
+    #print cur_block
     blkhash = conn.proxy.getblockhash(cur_block)
     blk = conn.proxy.getblock(blkhash)
     c = check(blk["tx"])
@@ -42,19 +42,26 @@ def gen_partial_tx(conn, target_addr, txid, voutid, amount):
   rawtx = proxy.createrawtransaction([{'txid' : txid, 'vout': voutid}], {target_addr : amount })
   return rawtx
 
+def import_privkey(conn, privkey):
+  out = conn.proxy.importprivkey(privkey)
+
+
 def sign_rawtx(conn, partial_tx):
   signed = conn.proxy.signrawtransaction(partial_tx)
   decoded = conn.proxy.decoderawtransaction(signed['hex'])
   assert decoded['vout'][0]['scriptPubKey']['reqSigs'] == 1
   return signed['hex']
 
+def send_raw_tx(conn, raw_tx):
+  return conn.proxy.sendrawtransaction(raw_tx)
 
-def gen_uri(order_id, order_descr):
+def gen_uri(order_id, order_descr, amount):
   import urllib
   payload = urllib.urlencode([
     #("server-url", server_url),
     ("order-id", order_id),
-    ("order-description", order_descr)
+    ("order-description", order_descr),
+    ("amount", amount)
   ])
   return payload
 
