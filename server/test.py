@@ -48,6 +48,16 @@ def sign_rawtx(conn, partial_tx):
   assert decoded['vout'][0]['scriptPubKey']['reqSigs'] == 1
   return signed['hex']
 
+
+def gen_uri(server_url, order_id, order_descr):
+  import urllib
+  payload = urllib.urlencode([
+    ("server-url", server_url),
+    ("order-id", order_id),
+    ("order-description", order_descr)
+  ])
+  return "multisig:%s" % payload
+
 def run():
   conn = bitcoinrpc.connect_to_local()
   info = conn.getinfo()
@@ -77,6 +87,7 @@ def run():
   check = check_rcv_2of3(conn, multisig, 0.1, searchdepth = 100)
   print check
   if not check[0]:
+    print "ERROR: didn't received payment at %s" % multisig
     return
 
   print
@@ -97,8 +108,16 @@ def run():
   fn = "qr.png"
   print "GENERATING QR CODE for partial transaction: %s" % fn
   import qrencode as qr
-  qrcode = qr.encode_scaled(signed_partial_tx, 512)
+  qrdata = signed_partial_tx.decode("hex").encode("base64")
+  qrcode = qr.encode_scaled(qrdata, 512)
   qrcode[2].save(fn, format="png")
+
+  print
+  server_url = "http://10.200.1.73/multisig"
+  order_id = "123"
+  order_descr = "test bestellung 123"
+  uri = gen_uri(server_url, order_id, order_descr)
+  print "URI:", uri
 
 if __name__ == "__main__":
   #run()
