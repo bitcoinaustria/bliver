@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import com.google.bitcoin.core.PeerGroup;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
-public class PackageListActivity extends FragmentActivity
-        implements PackageListFragment.Callbacks {
+public class PackageListActivity extends FragmentActivity implements PackageListFragment.Callbacks {
 
     private boolean mTwoPane;
 
@@ -27,16 +30,16 @@ public class PackageListActivity extends FragmentActivity
         final Intent intent = getIntent();
         final Uri data = intent.getData();
         if (data != null) {
-            final MultisigURI multisigUri = MultisigURI.from(data.toString());
-            int i = 0;
+            final MultisigUri multisigUri = MultisigUri.from(data.toString());
+            // TODO
         }
     }
 
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(Long id) {
         if (mTwoPane) {
             Bundle arguments = new Bundle();
-            arguments.putString(PackageDetailFragment.ARG_ITEM_ID, id);
+            arguments.putLong(PackageDetailFragment.ARG_ITEM_ID, id);
             PackageDetailFragment fragment = new PackageDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -49,7 +52,31 @@ public class PackageListActivity extends FragmentActivity
             startActivity(detailIntent);
         }
     }
-    private static void unusedBla(){
-        new PeerGroup(null,null);
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mainmenu, menu);
+        return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.scan_action) {
+            final IntentIntegrator integrator = new IntentIntegrator(this);
+            integrator.initiateScan();
+        }
+
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (scanResult != null) {
+            //scanResult.getContents()
+            // TODO
+        }
+    }
+
 }

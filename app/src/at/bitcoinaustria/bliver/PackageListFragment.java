@@ -1,7 +1,5 @@
 package at.bitcoinaustria.bliver;
 
-import at.bitcoinaustria.bliver.dummy.DummyContent;
-
 import android.R;
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +7,10 @@ import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import at.bitcoinaustria.bliver.db.Delivery;
+import at.bitcoinaustria.bliver.db.DeliveryDao;
+
+import java.util.List;
 
 public class PackageListFragment extends ListFragment {
 
@@ -16,15 +18,15 @@ public class PackageListFragment extends ListFragment {
 
     private Callbacks mCallbacks = sDummyCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
+    private DeliveryDao deliveryDao;
 
     public interface Callbacks {
-
-        public void onItemSelected(String id);
+        public void onItemSelected(Long id);
     }
 
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(Long id) {
         }
     };
 
@@ -34,10 +36,15 @@ public class PackageListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
+
+        this.deliveryDao = new DeliveryDao(getActivity());
+
+        final List<Delivery> items = deliveryDao.getAll();
+        final ArrayAdapter<Delivery> listAdapter = new ArrayAdapter<Delivery>(getActivity(),
                 R.layout.simple_list_item_activated_1,
                 R.id.text1,
-                DummyContent.ITEMS));
+                items);
+        setListAdapter(listAdapter);
     }
 
     @Override
@@ -68,7 +75,8 @@ public class PackageListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        final List<Delivery> items = deliveryDao.getAll();
+        mCallbacks.onItemSelected(items.get(position).getId());
     }
 
     @Override
