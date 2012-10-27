@@ -100,13 +100,23 @@ def privkey_import():
 @app.route('/')
 def hello_world():
   from lib import gen_uri
-  data = gen_uri(HOSTNAME, url_for("multisig"), 123, "des cription of ...", 12341234)
+  from random import randint, shuffle
+  prnames = [ "UFO-02 Detector", "Uranium Ore", "Plutonium Enricher", "Unicorn Meat", "Beer" , "Fake Human Poop", "Emergency Underpants"]
+  shuffle(prnames)
+  prnames = prnames[:3]
+  prices = [ randint(1e6, 1e7) for _ in range(3) ]
+  psum = sum(prices)
+  prices = map(lambda _ : '%.6f' % (_/1e8), prices)
+  tentry = zip(prnames, prices)
+  data = gen_uri(HOSTNAME, url_for("multisig"), randint(1e6, 1e9), ', '.join(prnames), psum)
   return render_template('index.html',
     check_url='%s?addr=%s' % (url_for('check'), gen_multisig(PUBKEY)),
     ms_uri = 'multisig:%s' % (data),
     ms_url = url_for("multisig"),
     qr_url = gen_qr(PUBKEY),
-    privkey_import = url_for("privkey_import"))
+    privkey_import = url_for("privkey_import"),
+    psum = "%.6f" % (psum/1e8),
+    tentry = tentry)
 
 if __name__ == '__main__':
   app.run(port=14992, debug=True)
