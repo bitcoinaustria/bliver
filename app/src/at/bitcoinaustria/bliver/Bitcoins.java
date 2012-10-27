@@ -113,7 +113,7 @@ public final class Bitcoins implements Serializable {
         return Bitcoins.valueOf(roundToSignificantFigures(satoshis,n));
     }
 
-    private static long roundToSignificantFigures(long num, int n) {     //todo optimize for long
+    private static long roundToSignificantFigures(long num, int n) {
         if(num == 0) {
             return 0;
         }

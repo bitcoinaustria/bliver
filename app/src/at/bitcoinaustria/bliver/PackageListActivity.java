@@ -8,44 +8,66 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import at.bitcoinaustria.bliver.db.Delivery;
+import at.bitcoinaustria.bliver.db.DeliveryDao;
+import com.google.bitcoin.core.Address;
+import com.google.bitcoin.uri.BitcoinURI;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 public class PackageListActivity extends FragmentActivity implements PackageListFragment.Callbacks {
 
     private boolean mTwoPane;
+    private DeliveryDao deliveryDao;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        deliveryDao = new DeliveryDao(this);
         setContentView(R.layout.activity_package_list);
+
+        final PackageListFragment fragment = (PackageListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.package_list);
 
         if (findViewById(R.id.package_detail_container) != null) {
             mTwoPane = true;
-            ((PackageListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.package_list))
-                    .setActivateOnItemClick(true);
+            fragment.setActivateOnItemClick(true);
         }
 
         final Intent intent = getIntent();
-        final Uri data = intent.getData();
-        if (data != null) {
-            new AsyncTask<Void,Void,String>(){
+        final Uri incomingIntentUrl = intent.getData();
+
+        if (incomingIntentUrl != null) {
+            new AsyncTask<Void, Void, MultisigWrapper>() {
                 @Override
-                protected String doInBackground(Void... params) {
-                    final MultisigUri multisigUri = MultisigUri.from(data.toString());
-                    return new MultisigUriHandler(Signer.DEMO_SIGNER).fromMultisigUri(multisigUri);
+                protected MultisigWrapper doInBackground(Void... params) {
+                    final MultisigUri multisigUri = MultisigUri.from(incomingIntentUrl.toString());
+                    String intentUri = new MultisigUriHandler(Signer.DEMO_SIGNER).fromMultisigUri(multisigUri);
+                    Address address = new BitcoinURI(intentUri).getAddress();
+                    Delivery delivery = new Delivery(multisigUri, address);
+                    deliveryDao.save(delivery);
+                    return new MultisigWrapper(delivery, intentUri);
                 }
 
                 @Override
-                protected void onPostExecute(String bitcoinURI) {
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(bitcoinURI));
+                protected void onPostExecute(MultisigWrapper data) {
+                    fragment.addDelivery(data.delivery);
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(data.outgoingIntentUrl));
                     startActivity(i);
                 }
             }.execute();
+        }
+    }
 
-            int debug = 0;
+
+    private static class MultisigWrapper {
+        private final Delivery delivery;
+        private final String outgoingIntentUrl;
+
+        private MultisigWrapper(Delivery delivery, String outgoingIntentUrl) {
+            this.delivery = delivery;
+            this.outgoingIntentUrl = outgoingIntentUrl;
         }
     }
 

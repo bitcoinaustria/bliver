@@ -3,6 +3,7 @@ package at.bitcoinaustria.bliver;
 import android.R;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -19,6 +20,7 @@ public class PackageListFragment extends ListFragment {
     private Callbacks mCallbacks = sDummyCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
     private DeliveryDao deliveryDao;
+    private ArrayAdapter<Delivery> listAdapter;
 
     public interface Callbacks {
         public void onItemSelected(Long id);
@@ -40,11 +42,16 @@ public class PackageListFragment extends ListFragment {
         this.deliveryDao = new DeliveryDao(getActivity());
 
         final List<Delivery> items = deliveryDao.getAll();
-        final ArrayAdapter<Delivery> listAdapter = new ArrayAdapter<Delivery>(getActivity(),
+        listAdapter = new ArrayAdapter<Delivery>(getActivity(),
                 R.layout.simple_list_item_activated_1,
                 R.id.text1,
                 items);
         setListAdapter(listAdapter);
+    }
+
+    public void addDelivery(Delivery delivery) {
+        listAdapter.add(delivery);
+        listAdapter.notifyDataSetChanged();
     }
 
     @Override

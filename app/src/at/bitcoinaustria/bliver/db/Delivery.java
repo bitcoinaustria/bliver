@@ -1,6 +1,8 @@
 package at.bitcoinaustria.bliver.db;
 
 import at.bitcoinaustria.bliver.Bitcoins;
+import at.bitcoinaustria.bliver.MultisigUri;
+import com.google.bitcoin.core.Address;
 
 public class Delivery {
 
@@ -27,6 +29,11 @@ public class Delivery {
         this.txInputHash = txInputHash;
         this.txId = txId;
     }
+
+    public Delivery(MultisigUri multisigUri, Address address) {
+        this(multisigUri.server_url.toString(),multisigUri.orderID, multisigUri.orderDesc, OrderStatus.RECEIVED_MULTISIG, multisigUri.amount,address.toString(),"","");
+    }
+
 
     public Long getId() {
         return id;

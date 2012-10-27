@@ -20,6 +20,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,42 +30,55 @@ import java.util.List;
 public class MultisigUriHandler {
 
     final Signer signer;
+    private final HttpClient httpClient;
 
     public MultisigUriHandler(Signer signer) {
         this.signer = signer;
+        httpClient = new DefaultHttpClient();
+    }
+
+    public void broadcastTransaction(MultisigUri uri) {
+        String submitKey = uri.server_url + "/submit";
+        requestPostKeyValue(URI.create(submitKey),"private-key",signer.getPrivateKey());
     }
 
     private final static String testurl = "multisig:server-url=http%3A%2F%2F10.200.1.73%2Fmultisig&order-id=123&order-description=testbestellung%20123";
 
     public String fromMultisigUri(MultisigUri uri) {
         // Create a new HttpClient and Post Header
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(uri.server_url);
-
+        final String multisigAddr = requestPostKeyValue(uri.server_url, "public-key", signer.getPublicKey());
         try {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-            nameValuePairs.add(new BasicNameValuePair("public-key", signer.getPublicKey()));
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-            Log.i("BLIVER", "querying url:" + uri.server_url);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity responseEntity = Preconditions.checkNotNull(response.getEntity());
-            String responseStr = EntityUtils.toString(responseEntity);
-            ArrayList<String> lines = Lists.newArrayList(Splitter.on('\n').split(responseStr));
-            String multisigAddr = lines.get(0);
-
             Address address = new Address(null, multisigAddr);
             String ret = BitcoinURI.convertToBitcoinURI(address, uri.amount.toBigInteger(), "order:" + uri.orderDesc, null);
             BitcoinURI testifOK = new BitcoinURI(ret);
             Preconditions.checkNotNull(testifOK);
             return ret;
-        } catch (ClientProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (WrongNetworkException e) {
             throw new RuntimeException(e);
         } catch (AddressFormatException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String requestPostKeyValue(URI endpoint, String key, String value) {
+        HttpPost httppost = new HttpPost(endpoint);
+
+        final String multisigAddr;
+        try {
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+            nameValuePairs.add(new BasicNameValuePair(key, value));
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            Log.i("BLIVER", "querying url:" + endpoint);
+            HttpResponse response = httpClient.execute(httppost);
+            HttpEntity responseEntity = Preconditions.checkNotNull(response.getEntity());
+            String responseStr = EntityUtils.toString(responseEntity);
+            ArrayList<String> lines = Lists.newArrayList(Splitter.on('\n').split(responseStr));
+            multisigAddr = lines.get(0);
+        } catch (ClientProtocolException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return multisigAddr;
     }
 }

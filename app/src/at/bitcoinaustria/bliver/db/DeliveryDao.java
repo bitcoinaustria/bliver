@@ -71,6 +71,7 @@ public class DeliveryDao {
         }
 
         final Cursor cursor = db.rawQuery("SELECT LAST_INSERT_ROWID()", new String[]{});
+        cursor.moveToNext();
         delivery.setId(cursor.getLong(0));
         cursor.close();
     }
