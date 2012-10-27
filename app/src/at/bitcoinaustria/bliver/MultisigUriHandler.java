@@ -1,9 +1,7 @@
-package at.bitcoinaustria.bliver.sign;
+package at.bitcoinaustria.bliver;
 
-import at.bitcoinaustria.bliver.MultisigUri;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
-import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.WrongNetworkException;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.common.base.Preconditions;

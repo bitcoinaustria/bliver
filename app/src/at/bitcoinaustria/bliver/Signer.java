@@ -1,9 +1,7 @@
-package at.bitcoinaustria.bliver.sign;
+package at.bitcoinaustria.bliver;
 
-import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 
 import java.math.BigInteger;
 
