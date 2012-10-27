@@ -16,8 +16,9 @@ app = Flask(__name__)
 import bitcoinrpc
 conn = bitcoinrpc.connect_to_local()
 
-@app.route('/qr/<data>')
-def qr(data):
+@app.route('/qr')
+def qr():
+  data = request.args.get('data', '')
   from StringIO import StringIO
   img_io = StringIO()
   import qrencode as qr
@@ -54,7 +55,7 @@ def gen_qr(pubkey, target_addr = TARGET_ADDR, amount = 0.1):
     signed_partial_tx = sign_rawtx(conn, partial_tx)
     data = signed_partial_tx.decode("hex").encode("base64")
     import urllib
-    return url_for('qr', data = urllib.quote_plus(data))
+    return '%s?data=%s' % (url_for('qr'), urllib.quote_plus(data))
   else:
     return 'check_rcv_2of3_failed'
 
