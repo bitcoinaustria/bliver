@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-HOSTNAME = "bitcoinrelay.com"
+HOSTNAME = "bitcoinrelay.net"
 
 PUBKEY = "mrvQxKbe321W58xaTs65YS6mvUVGQyP52B"
 TARGET_ADDR = "myKPhLdmfk6Ss8j6ugqCVwsC3bcUHpZCg5"
@@ -58,8 +58,9 @@ def gen_qr(pubkey, target_addr = TARGET_ADDR, amount = 0.1):
   else:
     return 'check_rcv_2of3_failed'
 
-@app.route('/check/<addr>')
-def check(addr):
+@app.route('/check')
+def check():
+  addr = request.args.get('addr','')
   from lib import check_rcv_2of3
   value = float(request.args.get('value', 0.0))
   c = check_rcv_2of3(conn, addr, value)
@@ -90,11 +91,11 @@ def hello_world():
   import urllib
   H = urllib.quote_plus("http://%s" % HOSTNAME)
   return render_template('index.html',
-    check_url=url_for('check', addr = gen_multisig(PUBKEY)),
+    check_url='%s?addr=%s' % (url_for('check'), gen_multisig(PUBKEY)),
     ms_uri = 'multisig:%s%s?%s' % (H,url_for('multisig'), data),
     ms_url = url_for("multisig"),
     qr_url = gen_qr(PUBKEY),
     privkey_import = url_for("privkey_import"))
 
 if __name__ == '__main__':
-  app.run(port=14992, debug=False)
+  app.run(port=14992, debug=True)
