@@ -3,7 +3,6 @@ package at.bitcoinaustria.bliver;
 import android.R;
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,7 +16,7 @@ public class PackageListFragment extends ListFragment {
 
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-    private Callbacks mCallbacks = sDummyCallbacks;
+    private Callbacks mCallbacks = sDeliveryCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
     private DeliveryDao deliveryDao;
     private ArrayAdapter<Delivery> listAdapter;
@@ -26,7 +25,7 @@ public class PackageListFragment extends ListFragment {
         public void onItemSelected(Long id);
     }
 
-    private static Callbacks sDummyCallbacks = new Callbacks() {
+    private static Callbacks sDeliveryCallbacks = new Callbacks() {
         @Override
         public void onItemSelected(Long id) {
         }
@@ -49,8 +48,10 @@ public class PackageListFragment extends ListFragment {
         setListAdapter(listAdapter);
     }
 
-    public void addDelivery(Delivery delivery) {
-        listAdapter.add(delivery);
+    public void refreshFromDb() {
+        final List<Delivery> items = deliveryDao.getAll();
+        listAdapter.clear();
+        listAdapter.addAll(items);
         listAdapter.notifyDataSetChanged();
     }
 
@@ -76,7 +77,7 @@ public class PackageListFragment extends ListFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallbacks = sDummyCallbacks;
+        mCallbacks = sDeliveryCallbacks;
     }
 
     @Override
