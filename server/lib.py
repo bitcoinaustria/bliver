@@ -55,10 +55,11 @@ def sign_rawtx(conn, partial_tx):
 def send_raw_tx(conn, raw_tx):
   return conn.proxy.sendrawtransaction(raw_tx)
 
-def gen_uri(order_id, order_descr, amount):
+def gen_uri(hostname, url, order_id, order_descr, amount):
   import urllib
+  server_url = 'http://%s%s' % (hostname, url)
   payload = urllib.urlencode([
-    #("server-url", server_url),
+    ("server-url", server_url),
     ("order-id", order_id),
     ("order-description", order_descr),
     ("amount", amount)

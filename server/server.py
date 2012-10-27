@@ -87,12 +87,10 @@ def privkey_import():
 @app.route('/')
 def hello_world():
   from lib import gen_uri
-  data = gen_uri(123, "des cription of ...", 12341234)
-  import urllib
-  H = urllib.quote_plus("http://%s" % HOSTNAME)
+  data = gen_uri(HOSTNAME, url_for("multisig"), 123, "des cription of ...", 12341234)
   return render_template('index.html',
     check_url='%s?addr=%s' % (url_for('check'), gen_multisig(PUBKEY)),
-    ms_uri = 'multisig:%s%s?%s' % (H,url_for('multisig'), data),
+    ms_uri = 'multisig:%s' % (data),
     ms_url = url_for("multisig"),
     qr_url = gen_qr(PUBKEY),
     privkey_import = url_for("privkey_import"))
