@@ -10,11 +10,23 @@ AMOUNT = 1231234
 ESCROW = "03b08df6e673619b93fc0dd39be70d7bf56873241fcfde9e87332d79b87de80fcd"
 SENDER = "023d7a2768855435b221003cb23f26d950a4ee22f3d47c9833778326d221253afc"
 
-from flask import Flask, Response, render_template, request, url_for, send_file
+from flask import Flask, Response, render_template, request, url_for, send_file, make_response
 app = Flask(__name__)
 
 import bitcoinrpc
 conn = bitcoinrpc.connect_to_local()
+
+@app.route('/robots.txt', methods=['GET'])
+def robots_txt():
+  response = make_response(open('static/robots.txt').read())
+  response.headers["Content-type"] = "text/plain"
+  return response
+
+@app.route('/logo.jpeg', methods=['GET'])
+def logo_jpeg():
+  response = make_response(open('static/robots.txt').read())
+  response.headers["Content-type"] = "image/jpeg"
+  return response
 
 @app.route('/qr')
 def qr():
