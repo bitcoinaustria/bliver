@@ -1,5 +1,6 @@
 package at.bitcoinaustria.bliver;
 
+import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
 import com.google.common.annotations.VisibleForTesting;
 
@@ -27,8 +28,9 @@ public class Signer {
         return byteToHex(new ECKey().getPrivKeyBytes());
     }
 
-    public String getPrivateKey(){
-        return byteToHex(privateKey.getPrivKeyBytes());
+    public DumpedPrivateKey getPrivateKey(){
+        return privateKey.getPrivateKeyEncoded(Net.NETWORK);
+        //return byteToHex(privateKey.getPrivKeyBytes());
     }
 
     public String sign(String transactionInput){
