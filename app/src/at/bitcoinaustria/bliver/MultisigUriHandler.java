@@ -1,5 +1,6 @@
 package at.bitcoinaustria.bliver;
 
+import android.util.Log;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
 import com.google.bitcoin.core.WrongNetworkException;
@@ -35,7 +36,7 @@ public class MultisigUriHandler {
 
     private final static String testurl = "multisig:server-url=http%3A%2F%2F10.200.1.73%2Fmultisig&order-id=123&order-description=testbestellung%20123";
 
-    public BitcoinURI fromMultisigUri(MultisigUri uri) {
+    public String fromMultisigUri(MultisigUri uri) {
         // Create a new HttpClient and Post Header
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(uri.server_url);
@@ -44,15 +45,18 @@ public class MultisigUriHandler {
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
             nameValuePairs.add(new BasicNameValuePair("public-key", signer.getPublicKey()));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            Log.i("BLIVER", "querying url:" + uri.server_url);
             HttpResponse response = httpclient.execute(httppost);
-            HttpEntity responseEntity =  Preconditions.checkNotNull(response.getEntity());
+            HttpEntity responseEntity = Preconditions.checkNotNull(response.getEntity());
             String responseStr = EntityUtils.toString(responseEntity);
             ArrayList<String> lines = Lists.newArrayList(Splitter.on('\n').split(responseStr));
             String multisigAddr = lines.get(0);
 
             Address address = new Address(null, multisigAddr);
             String ret = BitcoinURI.convertToBitcoinURI(address, uri.amount.toBigInteger(), "order:" + uri.orderDesc, null);
-            return new BitcoinURI(ret);
+            BitcoinURI testifOK = new BitcoinURI(ret);
+            Preconditions.checkNotNull(testifOK);
+            return ret;
         } catch (ClientProtocolException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
