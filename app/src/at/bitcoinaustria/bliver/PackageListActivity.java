@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import com.google.bitcoin.core.PeerGroup;
+
+import java.security.interfaces.ECKey;
 
 public class PackageListActivity extends FragmentActivity
         implements PackageListFragment.Callbacks {
@@ -14,6 +17,7 @@ public class PackageListActivity extends FragmentActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_package_list);
 
         if (findViewById(R.id.package_detail_container) != null) {
@@ -40,5 +44,8 @@ public class PackageListActivity extends FragmentActivity
             detailIntent.putExtra(PackageDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
+    }
+    private static void unusedBla(){
+        new PeerGroup(null,null);
     }
 }
