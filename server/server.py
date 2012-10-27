@@ -1,10 +1,20 @@
 #!/usr/bin/env python
 
-from flask import Flask, Response, render_template, request, url_for
+from flask import Flask, Response, render_template, request, url_for, make_response, send_file
 app = Flask(__name__)
 
 import bitcoinrpc
 conn = bitcoinrpc.connect_to_local()
+
+@app.route('/qr/<data>')
+def qr(data):
+  from StringIO import StringIO
+  img_io = StringIO()
+  import qrencode as qr
+  img = qr.encode_scaled(data, 256)
+  img[2].save(img_io, 'PNG')
+  img_io.seek(0)
+  return send_file(img_io, mimetype='image/png')
 
 @app.route('/multisig', methods=["GET", "POST"])
 def multisig():
