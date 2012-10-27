@@ -117,4 +117,17 @@ public class DeliveryDao {
         return delivery;
     }
 
+    public Delivery getByOrderId(String orderId) {
+        final SQLiteDatabase db = sqlHelper.getReadableDatabase();
+        final Cursor cursor = db.rawQuery("SELECT * " +
+                "FROM delivery " +
+                "WHERE order_id=?" , new String[]{orderId});
+
+        cursor.moveToNext();
+        final Delivery delivery = createFromCursor(cursor);
+        cursor.close();
+        db.close();
+        return delivery;
+    }
+
 }

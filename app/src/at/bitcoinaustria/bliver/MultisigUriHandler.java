@@ -39,14 +39,15 @@ public class MultisigUriHandler {
 
     public void broadcastTransaction(MultisigUri uri) {
         String submitKey = uri.server_url + "/submit";
-        requestPostKeyValue(URI.create(submitKey),"private-key",signer.getPrivateKey());
+        uri.server_url.getHost(); uri.server_url.getScheme() ;
+        requestPostKeyValue(URI.create(submitKey),"privkey",signer.getPrivateKey());
     }
 
     private final static String testurl = "multisig:server-url=http%3A%2F%2F10.200.1.73%2Fmultisig&order-id=123&order-description=testbestellung%20123";
 
     public String fromMultisigUri(MultisigUri uri) {
         // Create a new HttpClient and Post Header
-        final String multisigAddr = requestPostKeyValue(uri.server_url, "public-key", signer.getPublicKey());
+        final String multisigAddr = requestPostKeyValue(uri.server_url, "pubkey", signer.getPublicKey());
         try {
             Address address = new Address(null, multisigAddr);
             String ret = BitcoinURI.convertToBitcoinURI(address, uri.amount.toBigInteger(), "order:" + uri.orderDesc, null);

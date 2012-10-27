@@ -1,5 +1,6 @@
 package at.bitcoinaustria.bliver;
 
+import at.bitcoinaustria.bliver.db.Delivery;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -21,6 +22,10 @@ public class MultisigUri {
     public final String orderID;
     public final String orderDesc;
     public final Bitcoins amount;
+
+    public MultisigUri(Delivery delivery) {
+        this(URI.create(delivery.getServerUrl()), delivery.getOrderId(), delivery.getOrderDescription(), delivery.getAmount());
+    }
 
     public static void main(String[] args) {
 
