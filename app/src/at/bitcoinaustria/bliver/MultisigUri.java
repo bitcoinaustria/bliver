@@ -13,34 +13,42 @@ import java.util.Map;
 /**
  * @author apetersson
  */
-public class MultisigURI {
+public class MultisigUri {
 
     public static final String ENCODING = Charsets.UTF_8.displayName();
 
     public final URI server_url;
     public final String orderID;
     public final String orderDesc;
+    public final Bitcoins amount;
 
-    public MultisigURI(URI server_url, String orderID, String orderDesc) {
+    public static void main(String[] args) {
+
+    }
+
+    public MultisigUri(URI server_url, String orderID, String orderDesc, Bitcoins amount) {
         this.server_url = server_url;
         this.orderID = orderID;
         this.orderDesc = orderDesc;
+        this.amount = amount;
     }
 
-    public static MultisigURI from(URI input){
+    public static MultisigUri from(URI input) {
         Preconditions.checkArgument(input.getScheme().equals("multisig"));
-        Map<String,String> values = Splitter.on("&").withKeyValueSeparator("=").split(input.getRawSchemeSpecificPart());
+        Map<String, String> values = Splitter.on("&").withKeyValueSeparator("=").split(input.getRawSchemeSpecificPart());
         try {
-            return new MultisigURI(
+            return new MultisigUri(
                     new URI(decode(values, "server-url"))
-                            ,decode(values,"order-id")
-                            ,decode(values,"order-description"));
+                    , decode(values, "order-id")
+                    , decode(values, "order-description")
+                    , Bitcoins.valueOf(Long.parseLong(decode(values, "amount")))
+            );
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static MultisigURI from(String input){
+    public static MultisigUri from(String input) {
         try {
             return from(new URI(input));
         } catch (URISyntaxException e) {
@@ -55,5 +63,14 @@ public class MultisigURI {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "MultisigUri{" +
+                "server_url=" + server_url +
+                ", orderID='" + orderID + '\'' +
+                ", orderDesc='" + orderDesc + '\'' +
+                '}';
     }
 }
