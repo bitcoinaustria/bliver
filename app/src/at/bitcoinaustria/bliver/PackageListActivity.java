@@ -1,13 +1,10 @@
 package at.bitcoinaustria.bliver;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
 import com.google.bitcoin.core.PeerGroup;
-
-import java.security.interfaces.ECKey;
 
 public class PackageListActivity extends FragmentActivity
         implements PackageListFragment.Callbacks {
@@ -25,6 +22,13 @@ public class PackageListActivity extends FragmentActivity
             ((PackageListFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.package_list))
                     .setActivateOnItemClick(true);
+        }
+
+        final Intent intent = getIntent();
+        final Uri data = intent.getData();
+        if (data != null) {
+            final MultisigURI multisigUri = MultisigURI.from(data.toString());
+            int i = 0;
         }
     }
 
