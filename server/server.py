@@ -16,6 +16,20 @@ app = Flask(__name__)
 import bitcoinrpc
 conn = bitcoinrpc.connect_to_local()
 
+@app.route('/policy', methods = ["GET", "POST"])
+def policy():
+  ADDR = 'myKPhLdmfk6Ss8j6ugqCVwsC3bcUHpZCg5'
+  policies = []
+  policies.append('policy 1')
+  policies.append('policy 2')
+  option = ""
+  delete = ""
+  if request.method == 'POST':
+    option = request.form.get("policy")
+    if request.form.get("delete"):
+      delete = "DELETE %s" % request.form.get("delete")
+  return render_template('policy.html', addr=ADDR, policies=policies, option = option, delete = delete)
+
 @app.route('/robots.txt', methods=['GET'])
 def robots_txt():
   response = make_response(open('static/robots.txt').read())
@@ -108,7 +122,8 @@ def hello_world():
   psum = sum(prices)
   prices = map(lambda _ : '%.6f' % (_/1e8), prices)
   tentry = zip(prnames, prices)
-  data = gen_uri(HOSTNAME, url_for("multisig"), randint(1e6, 1e9), ', '.join(prnames), psum)
+  from time import time
+  data = gen_uri(HOSTNAME, url_for("multisig"), int(10*time()), ', '.join(prnames), psum)
   return render_template('index.html',
     check_url='%s?addr=%s' % (url_for('check'), gen_multisig(PUBKEY)),
     ms_uri = 'multisig:%s' % (data),
