@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block body %}
+
+<h2>Policies for {{ addr }}</h2>
+
+<ul>
+{% for p in policies %}
+<li>{{p }}
+<form action='{{ policy_url }}' method="POST">
+<input type="hidden" name="delete" value="{{ p }}" />
+<input type="submit" value="DEL">
+</form>
+</li>
+{% endfor %}
+</ul>
+
+{% if delete %}
+You have deleted option {{ delete }}
+{% endif %}
+
+{% if option %}
+You have set to Option {{ option }}
+{% endif %}
+
+<form action='{{policy_url}}' method="POST">
+<select name="policy" size="1">
+{% for i in range(1, 10) %}
+<option value="{{i}}">Option {{ i }}</option>
+{% endfor %}
+</select>
+
+<br>
+<input type="submit" value="SET">
+</form>
+
+
+
+{% endblock %}

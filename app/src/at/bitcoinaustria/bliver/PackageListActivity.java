@@ -39,35 +39,24 @@ public class PackageListActivity extends FragmentActivity implements PackageList
         final Uri incomingIntentUrl = intent.getData();
 
         if (incomingIntentUrl != null) {
-            new AsyncTask<Void, Void, MultisigWrapper>() {
+            new AsyncTask<Void, Void, String>() {
                 @Override
-                protected MultisigWrapper doInBackground(Void... params) {
+                protected String doInBackground(Void... params) {
                     final MultisigUri multisigUri = MultisigUri.from(incomingIntentUrl.toString());
                     String intentUri = new MultisigUriHandler(Signer.DEMO_SIGNER).fromMultisigUri(multisigUri);
                     Address address = new BitcoinURI(intentUri).getAddress();
                     Delivery delivery = new Delivery(multisigUri, address);
                     deliveryDao.save(delivery);
-                    return new MultisigWrapper(delivery, intentUri);
+                    return intentUri;
                 }
 
                 @Override
-                protected void onPostExecute(MultisigWrapper data) {
-                    fragment.addDelivery(data.delivery);
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(data.outgoingIntentUrl));
+                protected void onPostExecute(String outgoingIntentUrl) {
+                    fragment.refreshFromDb();
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(outgoingIntentUrl));
                     startActivity(i);
                 }
             }.execute();
-        }
-    }
-
-
-    private static class MultisigWrapper {
-        private final Delivery delivery;
-        private final String outgoingIntentUrl;
-
-        private MultisigWrapper(Delivery delivery, String outgoingIntentUrl) {
-            this.delivery = delivery;
-            this.outgoingIntentUrl = outgoingIntentUrl;
         }
     }
 
