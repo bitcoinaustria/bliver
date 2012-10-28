@@ -1,0 +1,125 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/LinearLayout1"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+
+        <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:contentDescription="obama"
+                android:scaleType="centerCrop"
+                android:src="@drawable/obama"
+                android:tint="#7fff"/>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_weight="1">
+
+
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="obama-qr"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/obama_qr"
+                    />
+
+            <ProgressBar
+                    android:id="@+id/obama"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:minHeight="1dip"
+                    android:progress="40" android:clickable="false" android:focusable="false"
+                    android:layout_margin="10dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/obamaText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="80dp"
+            android:text="Large Text"
+            android:shadowColor="@android:color/white"
+            android:shadowRadius="40"
+            android:textSize="50dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" >
+
+        <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:contentDescription="romney"
+                android:scaleType="centerCrop"
+                android:src="@drawable/romney"
+                android:tint="#7fff"/>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_weight="1">
+
+            <ProgressBar
+                    android:id="@+id/romney"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:minHeight="1dip"
+                    android:progress="40"/>
+
+            <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="romney-qr"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/romney_qr"
+                    />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/romneyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="80dp"
+            android:shadowColor="@android:color/white"
+            android:shadowRadius="40"
+            android:text="Large Text"
+            android:textSize="50dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </FrameLayout>
+
+</LinearLayout>
