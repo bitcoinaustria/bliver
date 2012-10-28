@@ -115,18 +115,23 @@ public class PackageListFragment extends ListFragment {
 
     private class DeliveryArrayAdapter extends ArrayAdapter<Delivery> {
 
+        private final int textViewResourceId;
+
         public DeliveryArrayAdapter(Context context, int resource, int textViewResourceId, List<Delivery> objects) {
             super(context, resource, textViewResourceId, objects);
+            this.textViewResourceId = textViewResourceId;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            final TextView item = (TextView) super.getView(position, convertView, parent);
+            final View view = super.getView(position, convertView, parent);
+            final TextView item = (TextView) view.findViewById(textViewResourceId);
             final Delivery delivery = this.getItem(position);
             item.setCompoundDrawablesWithIntrinsicBounds(delivery.getVendor().getIconId(), 0, 0, 0);
             item.setCompoundDrawablePadding(10);
             return item;
         }
+
     }
 
 }
