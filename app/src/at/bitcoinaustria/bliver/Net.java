@@ -7,4 +7,5 @@ import com.google.bitcoin.core.NetworkParameters;
  */
 public class Net {
     public static final NetworkParameters NETWORK = NetworkParameters.testNet();
+    public static final String TAG = "BLIVER";
 }

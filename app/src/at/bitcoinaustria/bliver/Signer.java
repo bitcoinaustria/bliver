@@ -16,7 +16,7 @@ public class Signer {
     public static final String DEMO_PRIVATE_KEY = "47f1b377f5c234da70d999f5674e57a8387fd6c1017943afbdd42fd6e13fbc59";
     //public static final String DEMO_PUBLIC_KEY = "04b8d36946d1d96c8d6215a982fe7fbe81072294c2a5290eed5119bda05b72947b35372bd691394b438dc184dfb168e1d0bb3a85b129ebaa6c0bb0d40876b75e0c";
 
-    public static Signer DEMO_SIGNER = new Signer(DEMO_PRIVATE_KEY, 6);
+    public static Signer DEMO_SIGNER = new Signer(DEMO_PRIVATE_KEY, 10);
 
     public static void main(String[] args) {
         System.out.println("addr " + DEMO_SIGNER.privateKey.toAddress(Net.NETWORK));

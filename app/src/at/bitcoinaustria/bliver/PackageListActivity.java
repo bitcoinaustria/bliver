@@ -11,18 +11,35 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
+import at.bitcoinaustria.bliver.db.OrderStatus;
 import at.bitcoinaustria.bliver.db.Vendor;
 import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.ProtocolException;
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.Address;
 import com.google.bitcoin.uri.BitcoinURI;
+import com.google.common.base.Function;
+import com.google.common.collect.Ordering;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 public class PackageListActivity extends FragmentActivity implements PackageListFragment.Callbacks {
+    static {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                Log.e(Net.TAG, "uncaught exception", ex);
+            }
+        });
+    }
+
+    public static final Ordering<Delivery> ORDER_DELIVERY = Ordering.natural().onResultOf(new Function<Delivery, Comparable>() {
+        @Nullable
+        @Override
+        public Comparable apply(@Nullable Delivery input) {
+            return input.getId();
+        }
+    });
 
     private boolean mTwoPane;
     private DeliveryDao deliveryDao;
@@ -62,6 +79,7 @@ public class PackageListActivity extends FragmentActivity implements PackageList
                 protected void onPostExecute(String outgoingIntentUrl) {
                     fragment.refreshFromDb();
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(outgoingIntentUrl));
+                    Log.i(Net.TAG,"forwarding to bitcoin uri: "+outgoingIntentUrl);
                     startActivity(i);
                 }
             }.execute();
@@ -124,6 +142,10 @@ public class PackageListActivity extends FragmentActivity implements PackageList
                     MultisigUri multisigUri = new MultisigUri(delivery);*/
                     // new MultisigUriHandler(Signer.DEMO_SIGNER).broadcastTransaction(multisigUri,signed);
                     new MultisigUriHandler(demo_signer).broadcastTransaction();
+
+                    Delivery last = ORDER_DELIVERY.max(deliveryDao.getAll());
+                    last.setOrderStatus(OrderStatus.SENT_CONFIRMATION);
+                    deliveryDao.save(last);
                 }
             };
             task.start();

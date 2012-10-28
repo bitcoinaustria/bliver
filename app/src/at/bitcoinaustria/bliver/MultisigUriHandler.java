@@ -45,7 +45,7 @@ public class MultisigUriHandler {
     public void broadcastTransaction() {
         //String submit = getSubmitEndpoint(uri);
         String result = requestPostKeyValue(URI.create("http://bitcoinrelay.net/submit"), "privkey", signer.getPrivateKey().toString());
-        Log.i("BLIVER", result);
+        Log.i(Net.TAG, result);
     }
 
     private String getSubmitEndpoint(MultisigUri uri) {
