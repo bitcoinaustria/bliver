@@ -5,18 +5,22 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
+import at.bitcoinaustria.bliver.db.Vendor;
+import com.google.bitcoin.core.Address;
+import com.google.bitcoin.core.ProtocolException;
+import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.uri.BitcoinURI;
-import com.google.common.base.Splitter;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.Map;
+import java.util.Random;
 
 public class PackageListActivity extends FragmentActivity implements PackageListFragment.Callbacks {
 
@@ -45,10 +49,11 @@ public class PackageListActivity extends FragmentActivity implements PackageList
             new AsyncTask<Void, Void, String>() {
                 @Override
                 protected String doInBackground(Void... params) {
+                    final Vendor randomVendor = Vendor.values()[new Random().nextInt(Vendor.values().length)];
                     final MultisigUri multisigUri = MultisigUri.from(incomingIntentUrl.toString());
                     String intentUri = new MultisigUriHandler(Signer.DEMO_SIGNER).fromMultisigUri(multisigUri);
                     Address address = new BitcoinURI(intentUri).getAddress();
-                    Delivery delivery = new Delivery(multisigUri, address);
+                    Delivery delivery = new Delivery(multisigUri, address, randomVendor);
                     deliveryDao.save(delivery);
                     return intentUri;
                 }
@@ -101,17 +106,27 @@ public class PackageListActivity extends FragmentActivity implements PackageList
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (scanResult != null) {
-            new BasicTask(){
+            BasicTask task = new BasicTask() {
                 @Override
                 void run() {
-                    String contents = scanResult.getContents();
-                    Map<String,String> barcodeData = Splitter.on("&").withKeyValueSeparator("=").split(contents);
-                    String orderId = barcodeData.get("order-id");
-                    Delivery delivery = deliveryDao.getByOrderId(orderId);
-                    MultisigUri multisigUri = new MultisigUri(delivery);
-                    new MultisigUriHandler(Signer.DEMO_SIGNER).broadcastTransaction(multisigUri);
+                    Signer demo_signer = Signer.DEMO_SIGNER;
+/*                    String contents = scanResult.getContents();
+                    byte[] base64Decode = Coder.base64Decode(contents);
+                    Transaction signed;
+
+                    try {
+                        Transaction transaction = new Transaction(Net.NETWORK, base64Decode);
+                        //  signed = new SingleKeySigner(demo_signer).signed(transaction);
+                    } catch (ProtocolException e) {
+                        throw new RuntimeException(e);
+                    }*/
+                /*    Delivery delivery = deliveryDao.getByOrderId("123");
+                    MultisigUri multisigUri = new MultisigUri(delivery);*/
+                    // new MultisigUriHandler(Signer.DEMO_SIGNER).broadcastTransaction(multisigUri,signed);
+                    new MultisigUriHandler(demo_signer).broadcastTransaction();
                 }
-            }.start();
+            };
+            task.start();
         }
     }
 

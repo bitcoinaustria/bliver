@@ -1,12 +1,14 @@
 package at.bitcoinaustria.bliver;
 
-import android.R;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
 
@@ -19,7 +21,7 @@ public class PackageListFragment extends ListFragment {
     private Callbacks mCallbacks = sDeliveryCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
     private DeliveryDao deliveryDao;
-    private ArrayAdapter<Delivery> listAdapter;
+    private DeliveryArrayAdapter listAdapter;
 
     public interface Callbacks {
         public void onItemSelected(Long id);
@@ -41,7 +43,7 @@ public class PackageListFragment extends ListFragment {
         this.deliveryDao = new DeliveryDao(getActivity());
 
         final List<Delivery> items = deliveryDao.getAll();
-        listAdapter = new ArrayAdapter<Delivery>(getActivity(),
+        listAdapter = new DeliveryArrayAdapter(getActivity(),
                 R.layout.simple_list_item_activated_1,
                 R.id.text1,
                 items);
@@ -110,4 +112,26 @@ public class PackageListFragment extends ListFragment {
 
         mActivatedPosition = position;
     }
+
+    private class DeliveryArrayAdapter extends ArrayAdapter<Delivery> {
+
+        private final int textViewResourceId;
+
+        public DeliveryArrayAdapter(Context context, int resource, int textViewResourceId, List<Delivery> objects) {
+            super(context, resource, textViewResourceId, objects);
+            this.textViewResourceId = textViewResourceId;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final View view = super.getView(position, convertView, parent);
+            final TextView item = (TextView) view.findViewById(textViewResourceId);
+            final Delivery delivery = this.getItem(position);
+            item.setCompoundDrawablesWithIntrinsicBounds(delivery.getVendor().getIconId(), 0, 0, 0);
+            item.setCompoundDrawablePadding(10);
+            return item;
+        }
+
+    }
+
 }

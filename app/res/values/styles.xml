@@ -1,5 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Light" />
+    <style name="Theme" parent="android:Theme"/>
+
+    <style name="Theme.AppTheme" parent="android:style/Theme.Holo.Light">
+        <item name="android:listViewStyle">@style/Theme.AppListView</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
+    </style>
+
+    <style name="Theme.AppListView" parent="@android:style/Widget.Holo.Light.ListView">
+        <item name="android:listSelector">@drawable/list_selector_holo_light</item>
+    </style>
 
 </resources>

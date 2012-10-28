@@ -5,13 +5,13 @@
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="15" />
+        android:targetSdkVersion="16" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/Theme.AppTheme" >
         <activity
             android:name=".PackageListActivity"
             android:label="@string/title_package_list" >

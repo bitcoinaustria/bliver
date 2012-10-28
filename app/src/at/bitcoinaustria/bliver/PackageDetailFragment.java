@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
@@ -37,6 +38,12 @@ public class PackageDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_package_detail, container, false);
         if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.package_detail)).setText(mItem.getOrderDescription());
+            ((ImageView) rootView.findViewById(R.id.package_logo)).setImageResource(mItem.getVendor().getIconId());
+            ((TextView) rootView.findViewById(R.id.package_vendor)).setText("Vendor: "  + mItem.getVendor().getCaption());
+            ((TextView) rootView.findViewById(R.id.package_order_id)).setText("Order ID: "  + mItem.getOrderId());
+            ((TextView) rootView.findViewById(R.id.package_amount)).setText("Amount: "  + mItem.getAmount().toCurrencyString());
+            ((TextView) rootView.findViewById(R.id.package_status)).setText("Order status: "  + mItem.getOrderStatus().getCaption());
+            ((TextView) rootView.findViewById(R.id.package_multisig_address)).setText("Payment address: "  + mItem.getMultisigAddress());
         }
         return rootView;
     }

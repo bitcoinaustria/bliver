@@ -1,13 +1,13 @@
 package at.bitcoinaustria.bliver;
 
+
 import android.util.Log;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
+import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.WrongNetworkException;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -37,17 +37,26 @@ public class MultisigUriHandler {
         httpClient = new DefaultHttpClient();
     }
 
-    public void broadcastTransaction(MultisigUri uri) {
-        String submitKey = uri.server_url + "/submit";
-        uri.server_url.getHost(); uri.server_url.getScheme() ;
-        requestPostKeyValue(URI.create(submitKey),"privkey",signer.getPrivateKey());
+    public void broadcastTransaction(MultisigUri uri, Transaction signed) {
+        String submitEndpoint = getSubmitEndpoint(uri);
+        requestPostKeyValue(URI.create(submitEndpoint), "transaction", Coder.base64Encode(signed.bitcoinSerialize()));
+    }
+
+    public void broadcastTransaction() {
+        //String submit = getSubmitEndpoint(uri);
+        String result = requestPostKeyValue(URI.create("http://bitcoinrelay.net/submit"), "privkey", signer.getPrivateKey().toString());
+        Log.i("BLIVER", result);
+    }
+
+    private String getSubmitEndpoint(MultisigUri uri) {
+        return uri.server_url.getScheme() + "://" + uri.server_url.getHost() + "/submit";
     }
 
     private final static String testurl = "multisig:server-url=http%3A%2F%2F10.200.1.73%2Fmultisig&order-id=123&order-description=testbestellung%20123";
 
     public String fromMultisigUri(MultisigUri uri) {
         // Create a new HttpClient and Post Header
-        final String multisigAddr = requestPostKeyValue(uri.server_url, "pubkey", signer.getPublicKey());
+        final String multisigAddr = requestPostKeyValue(uri.server_url, "pubkey", signer.getPublicKey(), "amount", uri.amount.toBigInteger().toString());
         try {
             Address address = new Address(null, multisigAddr);
             String ret = BitcoinURI.convertToBitcoinURI(address, uri.amount.toBigInteger(), "order:" + uri.orderDesc, null);
@@ -61,25 +70,42 @@ public class MultisigUriHandler {
         }
     }
 
-    private String requestPostKeyValue(URI endpoint, String key, String value) {
+    private String requestPostKeyValue(URI endpoint, String key1, String value1, String key2, String value2) {
         HttpPost httppost = new HttpPost(endpoint);
 
-        final String multisigAddr;
         try {
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-            nameValuePairs.add(new BasicNameValuePair(key, value));
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            nameValuePairs.add(new BasicNameValuePair(key1, value1));
+            nameValuePairs.add(new BasicNameValuePair(key2, value2));
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-            Log.i("BLIVER", "querying url:" + endpoint);
+            // Log.i("BLIVER", "querying url:" + endpoint);
             HttpResponse response = httpClient.execute(httppost);
             HttpEntity responseEntity = Preconditions.checkNotNull(response.getEntity());
-            String responseStr = EntityUtils.toString(responseEntity);
-            ArrayList<String> lines = Lists.newArrayList(Splitter.on('\n').split(responseStr));
-            multisigAddr = lines.get(0);
+            return EntityUtils.toString(responseEntity);
         } catch (ClientProtocolException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return multisigAddr;
     }
+
+    private String requestPostKeyValue(URI endpoint, String key, String value) {
+        HttpPost httppost = new HttpPost(endpoint);
+
+        try {
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+            nameValuePairs.add(new BasicNameValuePair(key, value));
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+            // Log.i("BLIVER", "querying url:" + endpoint);
+            HttpResponse response = httpClient.execute(httppost);
+            HttpEntity responseEntity = Preconditions.checkNotNull(response.getEntity());
+            return EntityUtils.toString(responseEntity);
+        } catch (ClientProtocolException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }
