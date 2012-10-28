@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>BLiver Server</title>
+<title>ANHA Webshop</title>
 <style type="text/css">
 html {
   background: #bbb;
+}
+table {
+  border-collapse:collapse;
+}
+table td, table th {
+  text-align: left;
 }
 body {
   background: #fff;
@@ -20,23 +26,34 @@ body {
   -moz-border-radius: 5px;
   Border-radius: 5px;
 }
+
 form textarea {
   width: 100%;
 }
 .info {
-  font-variant: italic;
+  font-style: italic;
   font-size: 85%;
-  border-bottom: 1px solid black;
 }
-h1 { margin-bottom: 5px; }
+.header {
+  border-bottom: 1px solid black;
+  text-align: center;
+}
+.header img {
+  width: 100px;
+  height: 100px;
+}
+.header h1 {
+ margin: 0;
+ margin-bottom: 5px;
+ padding: 0;
+}
 </style>
 </head>
 <body>
-<div align="center">
+<div class="header">
 <img src='logo.png'>
+<h1>ANHA Webshop</h1>
 </div>
-<h1>BLiver Webshop</h1>
-<div class="info">This is just a demo for various server-side endpoints</div>
 
 {% block body -%}{%- endblock body %}
 

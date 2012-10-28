@@ -12,12 +12,12 @@ import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
 import at.bitcoinaustria.bliver.db.Vendor;
 import com.google.bitcoin.core.Address;
+import com.google.bitcoin.core.ProtocolException;
+import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.uri.BitcoinURI;
-import com.google.common.base.Splitter;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.util.Map;
 import java.util.Random;
 
 public class PackageListActivity extends FragmentActivity implements PackageListFragment.Callbacks {
@@ -108,11 +108,19 @@ public class PackageListActivity extends FragmentActivity implements PackageList
                 @Override
                 void run() {
                     String contents = scanResult.getContents();
-                    Map<String,String> barcodeData = Splitter.on("&").withKeyValueSeparator("=").split(contents);
-                    String orderId = barcodeData.get("order-id");
-                    Delivery delivery = deliveryDao.getByOrderId(orderId);
+                    byte[] decode = Base64.decode(contents);
+                    Transaction signed;
+                    Signer demo_signer = Signer.DEMO_SIGNER;
+                    try {
+                        Transaction transaction = new Transaction(Net.NETWORK, decode);
+                    //  signed = new SingleKeySigner(demo_signer).signed(transaction);
+                    } catch (ProtocolException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Delivery delivery = deliveryDao.getByOrderId("123");
                     MultisigUri multisigUri = new MultisigUri(delivery);
-                    new MultisigUriHandler(Signer.DEMO_SIGNER).broadcastTransaction(multisigUri);
+                   // new MultisigUriHandler(Signer.DEMO_SIGNER).broadcastTransaction(multisigUri,signed);
+                    new MultisigUriHandler(demo_signer).broadcastTransaction(multisigUri);
                 }
             }.start();
         }

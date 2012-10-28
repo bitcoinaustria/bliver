@@ -16,6 +16,20 @@ app = Flask(__name__)
 import bitcoinrpc
 conn = bitcoinrpc.connect_to_local()
 
+@app.route('/policy', methods = ["GET", "POST"])
+def policy():
+  ADDR = 'myKPhLdmfk6Ss8j6ugqCVwsC3bcUHpZCg5'
+  policies = []
+  policies.append('policy 1')
+  policies.append('policy 2')
+  option = ""
+  delete = ""
+  if request.method == 'POST':
+    option = request.form.get("policy")
+    if request.form.get("delete"):
+      delete = "DELETE %s" % request.form.get("delete")
+  return render_template('policy.html', addr=ADDR, policies=policies, option = option, delete = delete)
+
 @app.route('/robots.txt', methods=['GET'])
 def robots_txt():
   response = make_response(open('static/robots.txt').read())
@@ -100,13 +114,24 @@ def privkey_import():
 @app.route('/')
 def hello_world():
   from lib import gen_uri
-  data = gen_uri(HOSTNAME, url_for("multisig"), 123, "des cription of ...", 12341234)
+  from random import randint, shuffle
+  prnames = [ "UFO-02 Detector", "Uranium Ore", "Plutonium Enricher", "Unicorn Meat", "Beer" , "Fake Human Poop", "Emergency Underpants"]
+  shuffle(prnames)
+  prnames = prnames[:3]
+  prices = [ randint(1e6, 1e7) for _ in range(3) ]
+  psum = sum(prices)
+  prices = map(lambda _ : '%.6f' % (_/1e8), prices)
+  tentry = zip(prnames, prices)
+  from time import time
+  data = gen_uri(HOSTNAME, url_for("multisig"), int(10*time()), ', '.join(prnames), psum)
   return render_template('index.html',
     check_url='%s?addr=%s' % (url_for('check'), gen_multisig(PUBKEY)),
     ms_uri = 'multisig:%s' % (data),
     ms_url = url_for("multisig"),
     qr_url = gen_qr(PUBKEY),
-    privkey_import = url_for("privkey_import"))
+    privkey_import = url_for("privkey_import"),
+    psum = "%.6f" % (psum/1e8),
+    tentry = tentry)
 
 if __name__ == '__main__':
   app.run(port=14992, debug=True)
