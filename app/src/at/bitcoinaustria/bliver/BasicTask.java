@@ -5,16 +5,16 @@ import android.os.AsyncTask;
 /**
  * @author apetersson
  */
-public abstract class BasicTask extends AsyncTask<Void,Void,Void> {
+public abstract class BasicTask extends AsyncTask<Void, Void, Void> {
     @Override
     final protected Void doInBackground(Void... params) {
         run();
         return null;
     }
 
-    abstract void run() ;
+    abstract void run();
 
-    public void start(){
+    public void start() {
         execute();
     }
 }

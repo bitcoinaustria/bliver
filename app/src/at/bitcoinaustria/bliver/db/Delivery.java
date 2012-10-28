@@ -77,14 +77,6 @@ public class Delivery {
         this.orderStatus = orderStatus;
     }
 
-    public Vendor getVendor() {
-        return vendor;
-    }
-
-    public void setVendor(Vendor vendor) {
-        this.vendor = vendor;
-    }
-
     public Bitcoins getAmount() {
         return amount;
     }
@@ -121,6 +113,14 @@ public class Delivery {
     /* used as label in list view! */
     public String toString() {
         return getOrderDescription();
+    }
+
+    public Vendor getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
     }
 
 }

@@ -35,7 +35,6 @@ public final class Bitcoins implements Serializable {
     }*/
 
     /**
-     *
      * @param btc double Value in full bitcoins. must be an exact represenatation
      * @return bitcoin value representation
      * @throws IllegalArgumentException if the given double value loses precision when converted to long
@@ -110,18 +109,18 @@ public final class Bitcoins implements Serializable {
     }
 
     public Bitcoins roundToSignificantFigures(int n) {
-        return Bitcoins.valueOf(roundToSignificantFigures(satoshis,n));
+        return Bitcoins.valueOf(roundToSignificantFigures(satoshis, n));
     }
 
     private static long roundToSignificantFigures(long num, int n) {
-        if(num == 0) {
+        if (num == 0) {
             return 0;
         }
-        final double d = Math.ceil(Math.log10(num < 0 ? -num: num));
+        final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
         final int power = n - (int) d;
 
         final double magnitude = Math.pow(10, power);
-        final long shifted = Math.round(num*magnitude);
+        final long shifted = Math.round(num * magnitude);
         long ret = (long) (shifted / magnitude);
         return ret;
     }
