@@ -15,6 +15,7 @@ public class SqlHelper extends SQLiteOpenHelper {
             "order_id TEXT, \n" +
             "order_description TEXT, \n" +
             "order_status TEXT, \n" +
+            "vendor TEXT, \n" +
             "amount TEXT, \n" +
             "multisig_address TEXT, \n" +
             "tx_input_hash TEXT, \n" +
@@ -38,6 +39,7 @@ public class SqlHelper extends SQLiteOpenHelper {
                 "123",
                 "testbestellung 123",
                 OrderStatus.AWAITING_DELIVERY,
+                Vendor.EBAY,
                 Bitcoins.valueOf(300000000L),
                 "",
                 "",
@@ -48,7 +50,19 @@ public class SqlHelper extends SQLiteOpenHelper {
                 "120",
                 "Amazon Kindle Order",
                 OrderStatus.AWAITING_DELIVERY,
+                Vendor.AMAZON,
                 Bitcoins.valueOf(1200000000L),
+                "",
+                "",
+                ""
+        ));
+        deliveryDao.save(sqLiteDatabase, new Delivery(
+                "http://10.200.1.73/bliver/multisig.txt",
+                "99",
+                "MyPad Order",
+                OrderStatus.AWAITING_DELIVERY,
+                Vendor.ALIBABA,
+                Bitcoins.valueOf(600000000L),
                 "",
                 "",
                 ""

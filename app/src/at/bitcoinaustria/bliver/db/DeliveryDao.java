@@ -93,6 +93,7 @@ public class DeliveryDao {
         fields.put("order_id", delivery.getOrderId());
         fields.put("order_description", delivery.getOrderDescription());
         fields.put("order_status", delivery.getOrderStatus().name());
+        fields.put("vendor", delivery.getVendor().name());
         fields.put("amount", delivery.getAmount().toBigInteger().longValue());
         fields.put("multisig_address", delivery.getMultisigAddress());
         fields.put("tx_input_hash", delivery.getTxInputHash());
@@ -109,6 +110,7 @@ public class DeliveryDao {
         delivery.setOrderId(cursor.getString(cursor.getColumnIndex("order_id")));
         delivery.setOrderDescription(cursor.getString(cursor.getColumnIndex("order_description")));
         delivery.setOrderStatus(OrderStatus.valueOf(cursor.getString(cursor.getColumnIndex("order_status"))));
+        delivery.setVendor(Vendor.valueOf(cursor.getString(cursor.getColumnIndex("vendor"))));
         delivery.setAmount(Bitcoins.valueOf(cursor.getLong(cursor.getColumnIndex("amount"))));
         delivery.setMultisigAddress(cursor.getString(cursor.getColumnIndex("multisig_address")));
         delivery.setTxInputHash(cursor.getString(cursor.getColumnIndex("tx_input_hash")));

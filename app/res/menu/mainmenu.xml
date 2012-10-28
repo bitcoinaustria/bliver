@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/scan_action"
           android:title="Scan"
-          android:icon="@drawable/scan_icon"
+          android:icon="@drawable/ic_scan"
           android:showAsAction="withText|ifRoom"/>
 </menu>

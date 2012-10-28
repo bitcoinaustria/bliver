@@ -11,6 +11,7 @@ public class Delivery {
     private String orderId;
     private String orderDescription;
     private OrderStatus orderStatus;
+    private Vendor vendor;
     private Bitcoins amount;
     private String multisigAddress;
     private String txInputHash;
@@ -19,19 +20,20 @@ public class Delivery {
     public Delivery() {
     }
 
-    public Delivery(String serverUrl, String orderId, String orderDescription, OrderStatus orderStatus, Bitcoins amount, String multisigAddress, String txInputHash, String txId) {
+    public Delivery(String serverUrl, String orderId, String orderDescription, OrderStatus orderStatus, Vendor vendor, Bitcoins amount, String multisigAddress, String txInputHash, String txId) {
         this.serverUrl = serverUrl;
         this.orderId = orderId;
         this.orderDescription = orderDescription;
         this.orderStatus = orderStatus;
+        this.vendor = vendor;
         this.amount = amount;
         this.multisigAddress = multisigAddress;
         this.txInputHash = txInputHash;
         this.txId = txId;
     }
 
-    public Delivery(MultisigUri multisigUri, Address address) {
-        this(multisigUri.server_url.toString(), multisigUri.orderID, multisigUri.orderDesc, OrderStatus.RECEIVED_MULTISIG, multisigUri.amount, address.toString(), "", "");
+    public Delivery(MultisigUri multisigUri, Address address, Vendor vendor) {
+        this(multisigUri.server_url.toString(), multisigUri.orderID, multisigUri.orderDesc, OrderStatus.RECEIVED_MULTISIG, vendor, multisigUri.amount, address.toString(), "", "");
     }
 
 

@@ -11,10 +11,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
+import at.bitcoinaustria.bliver.db.Vendor;
+import com.google.bitcoin.core.Address;
+import com.google.bitcoin.core.ProtocolException;
+import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.util.Random;
 
 public class PackageListActivity extends FragmentActivity implements PackageListFragment.Callbacks {
 
@@ -43,11 +49,11 @@ public class PackageListActivity extends FragmentActivity implements PackageList
             new AsyncTask<Void, Void, String>() {
                 @Override
                 protected String doInBackground(Void... params) {
+                    final Vendor randomVendor = Vendor.values()[new Random().nextInt(Vendor.values().length)];
                     final MultisigUri multisigUri = MultisigUri.from(incomingIntentUrl.toString());
                     String intentUri = new MultisigUriHandler(Signer.DEMO_SIGNER).fromMultisigUri(multisigUri);
                     Address address = new BitcoinURI(intentUri).getAddress();
-                    Log.i("BLIVER", "requesting to send to: " + intentUri);
-                    Delivery delivery = new Delivery(multisigUri, address);
+                    Delivery delivery = new Delivery(multisigUri, address, randomVendor);
                     deliveryDao.save(delivery);
                     return intentUri;
                 }
