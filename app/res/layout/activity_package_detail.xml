@@ -1,6 +1,26 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/package_detail_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".PackageDetailActivity" />
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <ImageView android:layout_width="192dp"
+               android:layout_height="192dp"
+               android:layout_gravity="bottom|right"
+               android:src="@drawable/ic_vendor_generic"
+               android:tint="#afff"
+               android:contentDescription="void"/>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+        <FrameLayout android:id="@+id/package_detail_container"
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:paddingBottom="10dp"
+                     tools:context=".PackageDetailActivity"/>
+
+    </ScrollView>
+
+</FrameLayout>

@@ -78,14 +78,5 @@
               android:textSize="20dp"
               android:text="x"/>
 
-    <FrameLayout android:layout_width="fill_parent"
-                 android:layout_height="fill_parent">
-        <ImageView android:layout_width="192dp"
-                   android:layout_height="192dp"
-                   android:layout_gravity="bottom|right"
-                   android:src="@drawable/ic_vendor_generic"
-                   android:tint="#7fff"
-                   android:contentDescription="void"/>
-    </FrameLayout>
 </LinearLayout>
 
