@@ -1,6 +1,6 @@
 package com.google.bitcoin.core;
 
-import at.bitcoinaustria.bliver.Base64;
+import at.bitcoinaustria.bliver.Coder;
 import at.bitcoinaustria.bliver.Net;
 import at.bitcoinaustria.bliver.Signer;
 
@@ -18,7 +18,7 @@ public class SingleKeySigner {
 
     public static void main(String[] args) {
         try {
-            Transaction demoTx = new Transaction(Net.NETWORK, Base64.decode(DEMO_TX));
+            Transaction demoTx = new Transaction(Net.NETWORK, Coder.base64Decode(DEMO_TX));
             Transaction signed = new SingleKeySigner(Signer.DEMO_SIGNER).signed(demoTx);
         } catch (ProtocolException e) {
             throw new RuntimeException(e);

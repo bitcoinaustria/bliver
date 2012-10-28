@@ -5,12 +5,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
-import com.google.bitcoin.core.*;
+import com.google.bitcoin.core.Address;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -45,6 +46,7 @@ public class PackageListActivity extends FragmentActivity implements PackageList
                     final MultisigUri multisigUri = MultisigUri.from(incomingIntentUrl.toString());
                     String intentUri = new MultisigUriHandler(Signer.DEMO_SIGNER).fromMultisigUri(multisigUri);
                     Address address = new BitcoinURI(intentUri).getAddress();
+                    Log.i("BLIVER", "requesting to send to: " + intentUri);
                     Delivery delivery = new Delivery(multisigUri, address);
                     deliveryDao.save(delivery);
                     return intentUri;
@@ -98,25 +100,27 @@ public class PackageListActivity extends FragmentActivity implements PackageList
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (scanResult != null) {
-            new BasicTask(){
+            BasicTask task = new BasicTask() {
                 @Override
                 void run() {
-                    String contents = scanResult.getContents();
-                    byte[] decode = Base64.decode(contents);
-                    Transaction signed;
                     Signer demo_signer = Signer.DEMO_SIGNER;
+/*                    String contents = scanResult.getContents();
+                    byte[] base64Decode = Coder.base64Decode(contents);
+                    Transaction signed;
+
                     try {
-                        Transaction transaction = new Transaction(Net.NETWORK, decode);
-                    //  signed = new SingleKeySigner(demo_signer).signed(transaction);
+                        Transaction transaction = new Transaction(Net.NETWORK, base64Decode);
+                        //  signed = new SingleKeySigner(demo_signer).signed(transaction);
                     } catch (ProtocolException e) {
                         throw new RuntimeException(e);
-                    }
-                    Delivery delivery = deliveryDao.getByOrderId("123");
-                    MultisigUri multisigUri = new MultisigUri(delivery);
-                   // new MultisigUriHandler(Signer.DEMO_SIGNER).broadcastTransaction(multisigUri,signed);
-                    new MultisigUriHandler(demo_signer).broadcastTransaction(multisigUri);
+                    }*/
+                /*    Delivery delivery = deliveryDao.getByOrderId("123");
+                    MultisigUri multisigUri = new MultisigUri(delivery);*/
+                    // new MultisigUriHandler(Signer.DEMO_SIGNER).broadcastTransaction(multisigUri,signed);
+                    new MultisigUriHandler(demo_signer).broadcastTransaction();
                 }
-            }.start();
+            };
+            task.start();
         }
     }
 

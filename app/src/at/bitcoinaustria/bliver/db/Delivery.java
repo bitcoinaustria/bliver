@@ -31,7 +31,7 @@ public class Delivery {
     }
 
     public Delivery(MultisigUri multisigUri, Address address) {
-        this(multisigUri.server_url.toString(),multisigUri.orderID, multisigUri.orderDesc, OrderStatus.RECEIVED_MULTISIG, multisigUri.amount,address.toString(),"","");
+        this(multisigUri.server_url.toString(), multisigUri.orderID, multisigUri.orderDesc, OrderStatus.RECEIVED_MULTISIG, multisigUri.amount, address.toString(), "", "");
     }
 
 
