@@ -1,8 +1,91 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    style="?android:attr/textAppearanceLarge"
-    android:id="@+id/package_detail"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:context=".PackageDetailFragment" />
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+        <ImageView android:id="@+id/package_logo"
+                   android:layout_width="96dp"
+                   android:layout_height="96dp"
+                   android:contentDescription="void"/>
+
+        <TextView android:id="@+id/package_detail"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_centerVertical="true"
+                  android:layout_toRightOf="@id/package_logo"
+                  android:paddingLeft="10dp"
+                  android:gravity="center_vertical"
+                  android:textSize="30dp"
+                  android:textStyle="bold"
+                  tools:context=".PackageDetailFragment"/>
+
+    </RelativeLayout>
+
+    <TextView android:id="@+id/package_vendor"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:paddingTop="5dp"
+              android:paddingBottom="5dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:textSize="20dp"
+              android:text="x"/>
+
+    <TextView android:id="@+id/package_order_id"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:paddingTop="5dp"
+              android:paddingBottom="5dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:textSize="20dp"
+              android:text="x"/>
+
+    <TextView android:id="@+id/package_amount"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:paddingTop="5dp"
+              android:paddingBottom="5dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:textSize="20dp"
+              android:text="x"/>
+
+    <TextView android:id="@+id/package_status"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:paddingTop="5dp"
+              android:paddingBottom="5dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:textSize="20dp"
+              android:text="x"/>
+
+    <TextView android:id="@+id/package_multisig_address"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:paddingTop="5dp"
+              android:paddingBottom="5dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
+              android:textSize="20dp"
+              android:text="x"/>
+
+    <FrameLayout android:layout_width="fill_parent"
+                 android:layout_height="fill_parent">
+        <ImageView android:layout_width="192dp"
+                   android:layout_height="192dp"
+                   android:layout_gravity="bottom|right"
+                   android:src="@drawable/ic_vendor_generic"
+                   android:tint="#7fff"
+                   android:contentDescription="void"/>
+    </FrameLayout>
+</LinearLayout>
+

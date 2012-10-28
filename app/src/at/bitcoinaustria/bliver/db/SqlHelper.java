@@ -41,7 +41,7 @@ public class SqlHelper extends SQLiteOpenHelper {
                 OrderStatus.AWAITING_DELIVERY,
                 Vendor.EBAY,
                 Bitcoins.valueOf(300000000L),
-                "",
+                "ewru23u3bfiow3UOH352ddw",
                 "",
                 ""
         ));
@@ -52,7 +52,7 @@ public class SqlHelper extends SQLiteOpenHelper {
                 OrderStatus.AWAITING_DELIVERY,
                 Vendor.AMAZON,
                 Bitcoins.valueOf(1200000000L),
-                "",
+                "i340dsfjii2kaoweIGHKJW",
                 "",
                 ""
         ));
@@ -63,7 +63,7 @@ public class SqlHelper extends SQLiteOpenHelper {
                 OrderStatus.AWAITING_DELIVERY,
                 Vendor.ALIBABA,
                 Bitcoins.valueOf(600000000L),
-                "",
+                "ljN328HUOhiowio2309HO21",
                 "",
                 ""
         ));
