@@ -1,23 +1,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    android:divider="?android:attr/dividerHorizontal"
-    android:showDividers="middle"
-    tools:context=".PackageListActivity">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_marginLeft="0dp"
+              android:layout_marginRight="16dp"
+              android:divider="?android:attr/dividerHorizontal"
+              android:showDividers="middle"
+              android:baselineAligned="false"
+              tools:context=".PackageListActivity">
 
-    <fragment android:name="at.bitcoinaustria.bliver.PackageListFragment"
-        android:id="@+id/package_list"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+    <LinearLayout android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_weight="2"
+          android:background="@drawable/bg_pane_separator">
+        <fragment android:name="at.bitcoinaustria.bliver.PackageListFragment"
+                  android:id="@+id/package_list"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"/>
+    </LinearLayout>
 
     <FrameLayout android:id="@+id/package_detail_container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3" />
+                 android:layout_width="0dp"
+                 android:layout_height="match_parent"
+                 android:layout_weight="5"/>
 
 </LinearLayout>
