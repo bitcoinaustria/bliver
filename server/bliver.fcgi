@@ -9,5 +9,6 @@ from server import app
 
 if __name__ == '__main__':
     app.config['PORT'] = 14992
-    app.config['DEBUG'] = False
+    #app.config['DEBUG'] = False
+    app.config['DEBUG'] = True
     WSGIServer(app).run()

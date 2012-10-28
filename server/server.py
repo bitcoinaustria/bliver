@@ -4,7 +4,7 @@ HOSTNAME = "bitcoinrelay.net"
 
 PUBKEY = "mrvQxKbe321W58xaTs65YS6mvUVGQyP52B"
 TARGET_ADDR = "myKPhLdmfk6Ss8j6ugqCVwsC3bcUHpZCg5"
-AMOUNT = 1231234
+AMOUNT = 0.01
 
 # additional 2 for the 2 of 3 (additionally to the PUBKEY)
 ESCROW = "03b08df6e673619b93fc0dd39be70d7bf56873241fcfde9e87332d79b87de80fcd"
@@ -61,9 +61,16 @@ def multisig():
   data = json.dumps([order_id, order_descr])
   if request.method == 'POST':
     pubkey = request.form.get('pubkey')
+    amount = request.form.get('amount')
+    amount = int(amount) / 1e8
     #html = "POST %s<br>pubkey: %s" % (data, pubkey)
-    multisig = gen_multisig(pubkey)
-    return Response(multisig, mimetype='text/plain')
+    ms = gen_multisig(pubkey)
+
+    import pickle
+    f = open('/tmp/bliver.dat', 'w+')
+    pickle.dump([ms, amount], f)
+    print 'saved: %s, %s' % (ms, amount) 
+    return Response(ms, mimetype='text/plain')
   else:
     return "GET %s" % data
 
@@ -98,15 +105,23 @@ def privkey_import():
   from lib import import_privkey, gen_partial_tx, check_rcv_2of3, sign_rawtx, send_raw_tx
   privkey = request.form.get("privkey")
   try:
-    output = import_privkey(conn, privkey)
+    output = import_privkey(conn, privkey) or ""
   except Exception as e:
-    output = 'ERROR: %s' % e.error
-  check = check_rcv_2of3(conn, multisig, AMOUNT)
+    output = 'ERROR: %s, privkey=%s' % (e.error, privkey)
+  import pickle
+  f = open('/tmp/bliver.dat','r')
+  [ms, amount] = pickle.load(f)
+  print 'loaded: %s, %s' % (ms, amount) 
+  f.close()
+  check = check_rcv_2of3(conn, ms, amount)
+  output += '<br>check_rcv_2of3(%s, %s)</br>' % (ms, amount)
   if check and check[0]:
     _, txid, voutid = check
-    partial_tx = gen_partial_tx(conn, TARGET_ADDR, txid, voutid, AMOUNT)
+    partial_tx = gen_partial_tx(conn, TARGET_ADDR, txid, voutid, amount)
+    output += '<br>gen_partial_tx(%s, %s, %s, %s)</br>' % (TARGET_ADDR, txid, voutid, amount)
     signed_tx = sign_rawtx(conn, partial_tx)
-    output += '<br>SIGNED AND SENT!<br>%s' % send_raw_tx(signed_tx)
+    output += '<br>sign_rawtx(%s)</br>' % partial_tx
+    output += '<br>SIGNED AND SENT!<br>%s' % send_raw_tx(conn, signed_tx)
   else:
     output += '<br>check = FALSE :('
   return render_template('privkey.html', output = output)
@@ -124,14 +139,15 @@ def hello_world():
   tentry = zip(prnames, prices)
   from time import time
   data = gen_uri(HOSTNAME, url_for("multisig"), int(10*time()), ', '.join(prnames), psum)
+  ms = gen_multisig(PUBKEY)
   return render_template('index.html',
-    check_url='%s?addr=%s' % (url_for('check'), gen_multisig(PUBKEY)),
+    check_url='%s?addr=%s' % (url_for('check'), ms),
     ms_uri = 'multisig:%s' % (data),
     ms_url = url_for("multisig"),
     qr_url = gen_qr(PUBKEY),
     privkey_import = url_for("privkey_import"),
-    psum = "%.6f" % (psum/1e8),
+    psum = "%.6f" % (psum / 1e8),
     tentry = tentry)
 
-if __name__ == '__main__':
-  app.run(port=14992, debug=True)
+#if __name__ == '__main__':
+#  app.run(port=14992, debug=True)
