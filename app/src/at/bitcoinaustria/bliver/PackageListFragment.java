@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import at.bitcoinaustria.bliver.db.Delivery;
 import at.bitcoinaustria.bliver.db.DeliveryDao;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class PackageListFragment extends ListFragment {
@@ -21,7 +25,7 @@ public class PackageListFragment extends ListFragment {
     private Callbacks mCallbacks = sDeliveryCallbacks;
     private int mActivatedPosition = ListView.INVALID_POSITION;
     private DeliveryDao deliveryDao;
-    private DeliveryArrayAdapter listAdapter;
+    private DeliveryBaseAdapter listAdapter;
 
     public interface Callbacks {
         public void onItemSelected(Long id);
@@ -43,10 +47,7 @@ public class PackageListFragment extends ListFragment {
         this.deliveryDao = new DeliveryDao(getActivity());
 
         final List<Delivery> items = deliveryDao.getAll();
-        listAdapter = new DeliveryArrayAdapter(getActivity(),
-                R.layout.simple_list_item_activated_1,
-                R.id.text1,
-                items);
+        listAdapter = new DeliveryBaseAdapter(getActivity(), R.layout.simple_list_item_activated_1, R.id.text1, items);
         setListAdapter(listAdapter);
     }
 
@@ -87,6 +88,17 @@ public class PackageListFragment extends ListFragment {
         super.onListItemClick(listView, view, position, id);
         final List<Delivery> items = deliveryDao.getAll();
         mCallbacks.onItemSelected(items.get(position).getId());
+
+        if (mActivatedPosition != ListView.INVALID_POSITION) {
+            final View container = getListView().getChildAt(mActivatedPosition);
+            final ImageView arrow = (ImageView) container.findViewById(R.id.arrow1);
+            arrow.setVisibility(View.INVISIBLE);
+        }
+
+        final ImageView arrow = (ImageView) view.findViewById(R.id.arrow1);
+        arrow.setVisibility(View.VISIBLE);
+
+        setActivatedPosition(position);
     }
 
     @Override
@@ -113,23 +125,61 @@ public class PackageListFragment extends ListFragment {
         mActivatedPosition = position;
     }
 
-    private class DeliveryArrayAdapter extends ArrayAdapter<Delivery> {
+    private class DeliveryBaseAdapter extends BaseAdapter {
 
+        private final Context context;
+        private final int resourceId;
         private final int textViewResourceId;
+        private final List<Delivery> items;
 
-        public DeliveryArrayAdapter(Context context, int resource, int textViewResourceId, List<Delivery> objects) {
-            super(context, resource, textViewResourceId, objects);
+        private DeliveryBaseAdapter(Context context, int resourceId, int textViewResourceId, List<Delivery> items) {
+            this.context = context;
+            this.resourceId = resourceId;
             this.textViewResourceId = textViewResourceId;
+            this.items = new ArrayList<Delivery>();
+
+            this.items.addAll(items);
+        }
+
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        @Override
+        public Delivery getItem(int position) {
+            return items.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return getItem(position).getId();
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            final View view = super.getView(position, convertView, parent);
-            final TextView item = (TextView) view.findViewById(textViewResourceId);
-            final Delivery delivery = this.getItem(position);
-            item.setCompoundDrawablesWithIntrinsicBounds(delivery.getVendor().getIconId(), 0, 0, 0);
-            item.setCompoundDrawablePadding(10);
-            return item;
+            final View container;
+            if (convertView != null) {
+                container = convertView;
+            } else {
+                final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                container = inflater.inflate(resourceId, parent, false);
+            }
+
+            final TextView text = (TextView) container.findViewById(textViewResourceId);
+            final Delivery delivery = getItem(position);
+            text.setText(delivery.getOrderDescription());
+            text.setCompoundDrawablesWithIntrinsicBounds(delivery.getVendor().getIconId(), 0, 0, 0);
+            text.setCompoundDrawablePadding(10);
+            return container;
+        }
+
+        public void clear() {
+            items.clear();
+        }
+
+        public void addAll(Collection<Delivery> collection) {
+            items.addAll(collection);
         }
 
     }

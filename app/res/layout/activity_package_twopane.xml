@@ -5,11 +5,12 @@
               android:layout_height="match_parent"
               android:layout_marginLeft="0dp"
               android:layout_marginRight="16dp"
-              android:divider="?android:attr/dividerHorizontal"
-              android:showDividers="middle"
               android:baselineAligned="false"
               tools:context=".PackageListActivity">
-
+<!--
+    android:divider="?android:attr/dividerHorizontal"
+    android:showDividers="middle"
+-->
     <LinearLayout android:layout_width="0dp"
           android:layout_height="match_parent"
           android:layout_weight="2"
