@@ -8,9 +8,15 @@ the funds to the sender in the form of a [QR Code][qr]. This transaction
 is completed by the receiver on delivery (and observed by the deliverer)
 or a trusted third party.
 
+*[BLiver Presentation](http://tinyurl.com/bliver)*
+
 ## BLiver App
 
+the android "app" client is able to react on `multisig:*` URIs and pay to multisig addresses.
+
 ## BLiver Utilities
+
+the server component is able to create multisig addresses and sign paritial transactions using the bitcoinrpc python interface (with some monkey patching)
 
 ## License
 
